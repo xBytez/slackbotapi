@@ -57,7 +57,7 @@ var connectSlack = function(wsurl) {
     ws.on('message', function(data) {
     	logger.output({severity:'debug', source:'Socket | Receive',message: data,timestamp: new Date(),location: os.hostname()});
     	data = JSON.parse(data);
-    	EventEmitter.emit(slackAPI['events'][data.type], data);
+    	if(typeof data.type != 'undefined') EventEmitter.emit(slackAPI['events'][data.type], data);
     });
 }
 
@@ -141,6 +141,52 @@ slackAPI.prototype.reqAPI = reqAPI;
 slackAPI.prototype.data = slackData;
 slackAPI.prototype.ping = function() {
 	sendSock({'type': 'ping'});
+	return this;
+}	
+slackAPI.prototype.getChannel = function(term) {
+	for(var i in slackData.channels) {
+			if(slackData.channels[i]['name'] === term) var channel = slackData.channels[i];
+	}
+	if(typeof channel == 'undefined') {
+		for(var i in slackData.channels) {
+			if(slackData.channels[i]['id'] === term) var channel = slackData.channels[i];
+		}
+	}
+	return channel;
+}
+slackAPI.prototype.getUser = function(term) {
+	for(var i in slackData.users) {
+			if(slackData.users[i]['name'] === term) var user = slackData.users[i];
+	}
+	if(typeof user == 'undefined') {
+		for(var i in slackData.users) {
+			if(slackData.users[i]['id'] === term) var user = slackData.users[i];
+		}
+	}
+	return user;
+}
+slackAPI.prototype.getIM = function(term) {
+	for(var i in slackData.ims) {
+			if(slackData.ims[i]['user'] === term) var im = slackData.ims[i];
+	}
+	if(typeof im == 'undefined') {
+		for(var i in slackData.ims) {
+			if(slackData.ims[i]['user'] === this.getUser(term).id) var im = slackData.ims[i];
+		}
+	}
+	if(typeof im == 'undefined') {
+		for(var i in slackData.ims) {
+			if(slackData.ims[i]['id'] === term) var im = slackData.ims[i];
+		}
+	}
+	return im;
+}
+slackAPI.prototype.sendMsg = function(channel, text) {
+	sendSock({'type': 'message', 'channel': channel, 'text': text});
+	return this;
+}
+slackAPI.prototype.sendPM = function(user, text) {
+	sendSock({'type': 'message', 'channel': this.getIM(user).id, 'text': text});
 	return this;
 }
 
