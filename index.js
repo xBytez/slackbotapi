@@ -1,19 +1,19 @@
 //////////////////////////////////////////////////////////////////
-//			███████╗██╗      █████╗  ██████╗██╗  ██╗ 			//
-//			██╔════╝██║     ██╔══██╗██╔════╝██║ ██╔╝ 			//
-//			███████╗██║     ███████║██║     █████╔╝  			//
-//			╚════██║██║     ██╔══██║██║     ██╔═██╗  			//
-//			███████║███████╗██║  ██║╚██████╗██║  ██╗ 			//
-//			╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ 			//
-//			    14-12-14 | xBytez | me@xbytez.eu				//
+//		███████╗██╗      █████╗  ██████╗██╗  ██╗ 	//
+//		██╔════╝██║     ██╔══██╗██╔════╝██║ ██╔╝ 	//
+//		███████╗██║     ███████║██║     █████╔╝  	//
+//		╚════██║██║     ██╔══██║██║     ██╔═██╗  	//
+//		███████║███████╗██║  ██║╚██████╗██║  ██╗ 	//
+//		╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝	//
+//		    14-12-14 | xBytez | me@xbytez.eu		//
 //////////////////////////////////////////////////////////////////
 
 // Requiring node modules.
-var os		  = require('os'),
-	webSocket = require('ws'),
-	request	  = require('request'),
-	logger	  = require('jethro'),
-	EventEmitter2 = require('eventemitter2').EventEmitter2;
+var 	os	  	= require('os'),
+	webSocket 	= require('ws'),
+	request	  	= require('request'),
+	logger	  	= require('jethro'),
+	EventEmitter2 	= require('eventemitter2').EventEmitter2;
 
 // Starting the logger and EventEmitter
 logger.init();
