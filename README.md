@@ -13,7 +13,7 @@ Installation
 ------------
 `npm install slackbotapi`
 
-Usuage
+Usage
 ------------
 
 Please check `example_bot.js` for an example on how to use this API.
