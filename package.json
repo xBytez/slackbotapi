@@ -1,0 +1,33 @@
+{
+  "name": "slackbotapi",
+  "version": "1.0.0",
+  "description": "a node.js API using Slack their RTM API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xBytez/slackbotapi.git"
+  },
+  "keywords": [
+    "slack",
+    "api",
+    "rtm",
+    "team",
+    "communication",
+    "bot"
+  ],
+  "dependencies": {
+    "ws": "*",
+    "request": "*",
+    "jethro": "*",
+    "eventemitter2": "*"
+  },
+  "author": "xBytez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xBytez/slackbotapi/issues"
+  },
+  "homepage": "https://github.com/xBytez/slackbotapi"
+}
