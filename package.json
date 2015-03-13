@@ -1,6 +1,6 @@
 {
   "name": "slackbotapi",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "a node.js API using Slack their RTM API",
   "main": "index.js",
   "scripts": {
