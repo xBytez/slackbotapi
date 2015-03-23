@@ -138,6 +138,7 @@ slackAPI.events = {
     file_comment_added: 'file_comment_added',
     file_comment_edited: 'file_comment_edited',
     file_comment_deleted: 'file_comment_deleted',
+    pong: 'pong',
     presence_change: 'presence_change',
     manual_presence_change: 'manual_presence_change',
     pref_change: 'pref_change',
