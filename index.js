@@ -188,6 +188,17 @@ slackAPI.prototype.getUser = function(term) {
     }
     return user;
 }
+slackAPI.prototype.getUserByEmail = function(term) {
+	for(var i in slackData.users) {
+			if(slackData.users[i]['profile']['email'] === term) var user = slackData.users[i];
+	}
+	if(typeof user == 'undefined') {
+		for(var i in slackData.users) {
+			if(slackData.users[i]['id'] === term) var user = slackData.users[i];
+		}
+	}
+	return user;
+}
 slackAPI.prototype.getIM = function(term) {
     for(var i in slackData.ims) {
             if(slackData.ims[i]['user'] === term) var im = slackData.ims[i];
