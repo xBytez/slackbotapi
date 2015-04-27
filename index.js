@@ -61,7 +61,7 @@ var connectSlack = function(wsurl) {
     ws.on('message', function(data) {
         outputLog({severity:'debug', source:'Socket | Receive',message: data,timestamp: new Date(),location: os.hostname()});
         data = JSON.parse(data);
-        if(typeof data.type != 'undefined') EventEmitter.emit(slackAPI['events'][data.type], data);
+        if(typeof data.type != 'undefined' && typeof slackAPI['events'][data.type] !== 'undefined') EventEmitter.emit(slackAPI['events'][data.type], data);
     });
 }
 
