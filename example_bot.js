@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////
 
 // Requiring our module
-var slackAPI = require('slackAPI');
+var slackAPI = require('slackbotapi');
 
 // Starting
 var slack = new slackAPI({
