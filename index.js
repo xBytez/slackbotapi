@@ -13,10 +13,10 @@ var     os      = require('os'),
     webSocket   = require('ws'),
     request     = require('request'),
     logger      = require('jethro'),
-    EventEmitter2   = require('eventemitter2').EventEmitter2;
+    EventEmitter3   = require('eventemitter3');
 
 // Starting the logger and EventEmitter
-EventEmitter = new EventEmitter2({
+EventEmitter = new EventEmitter3({
     wildcard: true,
     delimiter: ':'
 });
@@ -235,14 +235,6 @@ slackAPI.prototype.addListener = function() {
 };
 slackAPI.prototype.on = function() {
     EventEmitter.on.apply(EventEmitter, arguments);
-    return this;
-};
-slackAPI.prototype.onAny = function() {
-    EventEmitter.onAny.apply(EventEmitter, arguments);
-    return this;
-};
-slackAPI.prototype.offAny = function() {
-    EventEmitter.offAny.apply(EventEmitter, arguments);
     return this;
 };
 slackAPI.prototype.once = function() {

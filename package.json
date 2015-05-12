@@ -1,6 +1,6 @@
 {
   "name": "slackbotapi",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "a node.js API using Slack their RTM API",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "ws": "*",
     "request": "*",
     "jethro": "*",
-    "eventemitter2": "*"
+    "eventemitter3": "*"
   },
   "author": "xBytez",
   "license": "ISC",
