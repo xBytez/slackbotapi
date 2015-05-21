@@ -5,7 +5,7 @@ node.js Slack RTM API module
 
 Requirements
 ------------
- * Node modules: eventemitter3  jethro  request  ws
+ * Node modules: `eventemitter3`,  `jethro`,  `request` and `ws`
  * An internet connection
 
 
