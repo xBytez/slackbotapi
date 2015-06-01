@@ -9,11 +9,11 @@
 //////////////////////////////////////////////////////////////////
 
 // Requiring node modules.
-var     os      = require('os'),
-    webSocket   = require('ws'),
-    request     = require('request'),
-    logger      = require('jethro'),
-    EventEmitter3   = require('eventemitter3');
+var os          = require('os');
+var webSocket   = require('ws');
+var request     = require('request');
+var logger      = require('jethro');
+var EventEmitter3   = require('eventemitter3');
 
 // Starting the logger and EventEmitter
 EventEmitter = new EventEmitter3({
@@ -22,7 +22,10 @@ EventEmitter = new EventEmitter3({
 });
 
 // Defining variables
-var slackData = {}, i = 0, token = '', logging;
+var slackData = {};
+var i = 0;
+var token = '';
+var logging;
 
 // Core functions
 var outputLog = function(obj) {
