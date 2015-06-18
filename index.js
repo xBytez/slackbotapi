@@ -82,7 +82,7 @@ var slackAPI = function(args) {
         logger.init();
         outputLog({severity:'error', source:'Slack API',message:'Invalid arguments! Please provide a valid boolean for logging.',timestamp: new Date(),location: os.hostname()});
     } else {
-        if(logging === true) { logging.init(); }
+        if(logging === true) { logger.init(); }
         logging = args['logging'];
     }
     if (!authtoken || typeof authtoken !== 'string' || !authtoken.match(/^([a-z]*)\-([0-9]*)\-([0-9a-zA-Z]*)/)) {
