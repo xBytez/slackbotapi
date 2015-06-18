@@ -86,7 +86,7 @@ var slackAPI = function(args) {
         logging = args['logging'];
     }
     if (!authtoken || typeof authtoken !== 'string' || !authtoken.match(/^([a-z]*)\-([0-9]*)\-([0-9a-zA-Z]*)/)) {
-        logger = true;
+        logging = true;
         logger.init();
         outputLog({severity:'error', source:'Slack API',message:'Invalid arguments! Please provide a valid auth token.',timestamp: new Date(),location: os.hostname()});
         process.exit(1);
