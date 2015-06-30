@@ -142,9 +142,7 @@ function slackAPI(args) {
         slackData.users = data.users;
         slackData.ims = data.ims;
         self.connectSlack(data.url, function(err, data){
-            if (err){
-                throw err;
-            } else {
+            if (!err){
                 self.emit(events[data.type], data);
             }
         });
