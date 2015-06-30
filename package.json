@@ -24,8 +24,11 @@
     "jethro": "*",
     "eventemitter3": "*"
   },
-  "author": "xBytez",
-  "license": "ISC",
+  "author": "xBytez <me@xbytez.eu>",
+  "contributors": [
+    "Samuel Mills <spam.mills@hotmail.com>"
+  ],
+  "license": "LGPL 3.0",
   "bugs": {
     "url": "https://github.com/xBytez/slackbotapi/issues"
   },
