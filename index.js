@@ -167,6 +167,7 @@ slackAPI.events = {
 
 // Protoypes
 slackAPI.prototype.reqAPI = reqAPI;
+slackAPI.prototype.sendSock = sendSock;
 slackAPI.prototype.data = slackData;
 slackAPI.prototype.logger = logger.output;
 slackAPI.prototype.ping = function() {
