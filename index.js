@@ -24,9 +24,9 @@ var logging;
 var ws;
 
 // Core functions
-var out = function(a, b, c) {
+var out = function(severity, source, message) {
     if (logging) {
-        logger(a, b, c);
+        logger(severity, source, message);
     }
 };
 
@@ -276,4 +276,3 @@ slackAPI.prototype.sendPM = function(user, text) {
 slackAPI.prototype.events = events;
 
 module.exports = slackAPI;
-
