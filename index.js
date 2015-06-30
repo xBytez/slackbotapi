@@ -91,6 +91,7 @@ var events = {
 
 var reqAPI = function(method, data, callback) {
     data.token = token;
+    if(typeof data.attachments !== 'undefined') data.attachments = JSON.stringify(data.attachments);
     request.post('https://slack.com/api/'+method, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             if (!callback) {
