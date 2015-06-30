@@ -23,9 +23,9 @@ var token = '';
 var logging;
 
 // Core functions
-var out = function(severity, source, message) {
+var out = function(severity, message) {
     if (logging) {
-        logger(severity, source, message);
+        logger(severity, "SlackAPI", message);
     }
 };
 
@@ -106,11 +106,11 @@ var sendSock = function(data) {
     if (typeof data !== "undefined") {
         data.id = i;
         data = JSON.stringify(data);
-        out("debug", "Sender", "Send: "+data);
+        out("debug", "Send: "+data);
         this.ws.send(data);
         i++;
     } else {
-        out('error', 'Sender', 'Send: No arguments specified!');
+        out('error', 'Send: No arguments specified!');
     }
 };
 
@@ -119,16 +119,16 @@ function slackAPI(args) {
     var authtoken = args['token'];
     if (typeof args !== 'object') {
         logging = true;
-        out('error', 'Slack API', 'Invalid arguments! Please provide an object with settings.');
+        out('error', 'Invalid arguments! Please provide an object with settings.');
         process.exit(1);
     } if (typeof args['logging'] !== 'boolean') {
         logging = true;
-        out('error', 'Slack API', 'Invalid arguments! Please provide a valid boolean for logging.');
+        out('error', 'Invalid arguments! Please provide a valid boolean for logging.');
     } else {
         logging = args['logging'];
     } if (!authtoken || typeof authtoken !== 'string' || !authtoken.match(/^([a-z]*)\-([0-9]*)\-([0-9a-zA-Z]*)/)) {
         logging = true;
-        out('error', 'Slack API', 'Invalid arguments! Please provide a valid auth token.');
+        out('error', 'Invalid arguments! Please provide a valid auth token.');
         process.exit(1);
     }
 
@@ -163,16 +163,16 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
     var self = this;
     self.ws = new webSocket(wsurl);
     self.ws.on('open', function() {
-        out('transport', 'Socket', 'Connected as '+slackData.self.name+' ['+slackData.self.id+'].');
+        out('transport', 'Connected as '+slackData.self.name+' ['+slackData.self.id+'].');
         self.emit("open")
     }).on('close', function(data) {
-        out('warning', 'Socket', 'Disconnected. Error: '+data);
+        out('warning', 'Disconnected. Error: '+data);
         self.emit("close", data)
     }).on('error', function(data) {
-        out('error', 'Socket', 'Error. Error: '+data);
+        out('error', 'Error. Error: '+data);
         self.emit("error", data)
     }).on('message', function(data) {
-        out('transport', 'Socket', "Recieved: " + data);
+        out('transport', "Recieved: " + data);
         data = JSON.parse(data);
         if (typeof data.type != 'undefined'){
             if (typeof events[data.type] !== 'undefined') {
