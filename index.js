@@ -21,7 +21,6 @@ var slackData = {};
 var i = 0;
 var token = '';
 var logging;
-var ws;
 
 // Core functions
 var out = function(severity, source, message) {
@@ -108,7 +107,7 @@ var sendSock = function(data) {
         data.id = i;
         data = JSON.stringify(data);
         out("debug", "Sender", "Send: "+data);
-        ws.send(data);
+        this.ws.send(data);
         i++;
     } else {
         out('error', 'Sender', 'Send: No arguments specified!');
@@ -158,14 +157,13 @@ slackAPI.prototype.data = slackData;
 slackAPI.prototype.logger = logger.output;
 slackAPI.prototype.ping = function() {
     sendSock({'type': 'ping'});
-    return this;
 };
 
 slackAPI.prototype.connectSlack = function(wsurl, cb) {
-    ws = new webSocket(wsurl);
     var self = this;
-    ws.on('open', function() {
-        out('info', 'Socket', 'Connected as '+slackData.self.name+' ['+slackData.self.id+'].');
+    self.ws = new webSocket(wsurl);
+    self.ws.on('open', function() {
+        out('transport', 'Socket', 'Connected as '+slackData.self.name+' ['+slackData.self.id+'].');
         self.emit("open")
     }).on('close', function(data) {
         out('warning', 'Socket', 'Disconnected. Error: '+data);
@@ -174,7 +172,7 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
         out('error', 'Socket', 'Error. Error: '+data);
         self.emit("error", data)
     }).on('message', function(data) {
-        out('debug', 'Socket', "Recieved: " + data);
+        out('transport', 'Socket', "Recieved: " + data);
         data = JSON.parse(data);
         if (typeof data.type != 'undefined'){
             if (typeof events[data.type] !== 'undefined') {
@@ -263,12 +261,10 @@ slackAPI.prototype.getIM = function(term) {
 
 slackAPI.prototype.sendMsg = function(channel, text) {
     sendSock({'type': 'message', 'channel': channel, 'text': text});
-    return this;
 };
 
 slackAPI.prototype.sendPM = function(user, text) {
     sendSock({'type': 'message', 'channel': this.getIM(user).id, 'text': text});
-    return this;
 };
 
 slackAPI.prototype.events = events;
