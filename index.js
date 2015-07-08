@@ -234,17 +234,20 @@ slackAPI.prototype.getUserByEmail = function(term) {
 };
 
 slackAPI.prototype.getIM = function(term) {
-    var im = null;
+    var im = null, self = this;
     for (var i in self.slackData.ims) {
         if(self.slackData.ims[i]['user'] === term) {
             im = self.slackData.ims[i];
         }
     }
     if (im === null) {
-        for (var i_ in self.slackData.ims) {
-            if (self.slackData.ims[i_]['user'] === this.getUser(term).id) {
-                im = self.slackData.ims[i_];
-            }
+        var user = this.getUser(term);
+        if(user !== null) {
+          for (var i_ in self.slackData.ims) {
+              if (self.slackData.ims[i_]['user'] === user.id) {
+                  im = self.slackData.ims[i_];
+              }
+          }
         }
     }
     if (im === null) {
@@ -261,8 +264,22 @@ slackAPI.prototype.sendMsg = function(channel, text) {
     this.sendSock({'type': 'message', 'channel': channel, 'text': text});
 };
 
-slackAPI.prototype.sendPM = function(user, text) {
-    this.sendSock({'type': 'message', 'channel': this.getIM(user).id, 'text': text});
+slackAPI.prototype.sendPM = function(userID, text) {
+    var self = this;
+    channel = self.getIM(userID);
+    if(channel !== null) {
+      self.sendSock({'type': 'message', 'channel': channel.id, 'text': text});
+    } else {
+      self.reqAPI('im.open', { user : this.getUser(userID).id }, function(data){
+        if(data.ok === true) {
+          self.slackData.ims.push(data.channel);
+          self.sendSock({'type': 'message', 'channel': data.channel.id, 'text': text});
+        } else {
+          self.out('error', 'Error. Unable to create an im channel: ' + data);
+          self.emit("error", data);
+        }
+      });
+    }
 };
 
 slackAPI.prototype.events = events;
