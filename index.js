@@ -234,7 +234,7 @@ slackAPI.prototype.getUserByEmail = function(term) {
 };
 
 slackAPI.prototype.getIM = function(term) {
-    var im = null; self = this;
+    var im = null, self = this;
     for (var i in self.slackData.ims) {
         if(self.slackData.ims[i]['user'] === term) {
             im = self.slackData.ims[i];
