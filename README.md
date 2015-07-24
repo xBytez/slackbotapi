@@ -15,7 +15,6 @@ A Node.JS module for Slack's RTM API
 
  * Modules: `eventemitter3`, `jethro`, `request` and `ws`
  * A valid Slack API Token
- * An internet connection
 
 #### Installation
 Installing slackbotapi is as simple as running the following command:
