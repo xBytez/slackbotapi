@@ -230,6 +230,10 @@ slackAPI.prototype.sendPM = function(user, text) {
     sendSock({'type': 'message', 'channel': this.getIM(user).id, 'text': text});
     return this;
 }
+slackAPI.prototype.sendTyping = function(channel) {
+    sendSock({'type': 'typing', channel: channel});
+    return this;
+}
 
 // Event prototypes
 slackAPI.prototype.addListener = function() {
