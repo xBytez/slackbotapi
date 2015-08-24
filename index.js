@@ -76,6 +76,14 @@ var events = {
     accounts_changed: 'accounts_changed'
 };
 
+var errors = {
+  object_arg_required: 'Invalid arguments! Please provide an object with settings.',
+  boolean_arg_required: 'Invalid arguments! Please provide a valid boolean for logging.',
+  invalid_token: 'Invalid arguments! Please provide a valid auth token.',
+  send_args_required: 'Send: No arguments specified!',
+  data_type_undefined: 'data.type not defined'
+};
+
 function slackAPI(args) {
     var self = this;
     var authtoken = args['token'];
@@ -87,17 +95,17 @@ function slackAPI(args) {
 
     if (typeof args !== 'object') {
         this.logging = true;
-        this.out('error', 'Invalid arguments! Please provide an object with settings.');
-        process.exit(1);
+        this.out('error', errrs.object_arg_required);
+        throw new Error(errors.object_arg_required);
     } if (typeof args['logging'] !== 'boolean') {
         this.logging = true;
-        this.out('error', 'Invalid arguments! Please provide a valid boolean for logging.');
+        this.out('error', errors.boolean_arg_required);
     } else {
         this.logging = args['logging'];
     } if (!authtoken || typeof authtoken !== 'string' || !authtoken.match(/^([a-z]*)\-([0-9]*)\-([0-9a-zA-Z]*)/)) {
         this.logging = true;
-        this.out('error', 'Invalid arguments! Please provide a valid auth token.');
-        process.exit(1);
+        this.out('error', errors.invalid_token);
+        throw new Error(errors.invalid_token);
     }
 
     this.token = authtoken;
@@ -153,7 +161,7 @@ slackAPI.prototype.sendSock = function(data) {
         this.ws.send(data);
         this.i++;
     } else {
-        this.out('error', 'Send: No arguments specified!');
+        this.out('error', errors.send_args_required);
     }
 };
 
@@ -177,7 +185,7 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
                 cb(null, data);
             }
         } else {
-            cb(new Error("data.type not defined"));
+            cb(new Error(errors.data_type_undefined));
         }
     });
 };
