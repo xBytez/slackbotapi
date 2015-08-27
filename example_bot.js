@@ -59,3 +59,8 @@ slack.on('message', function(data) {
 		}
 	}
 });
+
+slack.on('team_join', function(data) {
+	// greet new member that joins
+	slack.sendPM(data.user.id, 'Hello and welcome to the team! :simple_smile: :beers:');
+});
