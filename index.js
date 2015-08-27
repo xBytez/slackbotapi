@@ -275,7 +275,12 @@ slackAPI.prototype.getIM = function(term) {
         }
     }
     return im;
-};
+}
+
+slackAPI.prototype.sendTyping = function(channel) {
+    sendSock({'type': 'typing', channel: channel});
+    return this;
+}
 
 slackAPI.prototype.sendMsg = function(channel, text) {
     this.sendSock({'type': 'message', 'channel': channel, 'text': text});
