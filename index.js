@@ -73,7 +73,9 @@ var events = {
     email_domain_changed: 'email_domain_changed',
     bot_added: 'bot_added',
     bot_changed: 'bot_changed',
-    accounts_changed: 'accounts_changed'
+    accounts_changed: 'accounts_changed',
+    reaction_added: 'reaction_added',
+    reaction_removed: 'reaction_removed'
 };
 
 var errors = {
@@ -181,7 +183,14 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
         self.out('transport', "Recieved: " + data);
         data = JSON.parse(data);
         if (typeof data.type != 'undefined'){
-            if (typeof events[data.type] !== 'undefined') {
+            if (data.type === 'team_join') {
+                var messageData = data; // allow cb() to run when user.list refreshes
+                self.reqAPI('users.list', messageData, function(data) {
+                    data.members = self.slackData.users;
+                    cb(null, messageData);
+                })
+            }
+            else if (typeof events[data.type] !== 'undefined') {
                 cb(null, data);
             }
         } else {
@@ -274,10 +283,11 @@ slackAPI.prototype.sendMsg = function(channel, text) {
 
 slackAPI.prototype.sendPM = function(userID, text) {
     var self = this;
-    channel = self.getIM(userID);
+    var channel = self.getIM(userID);
     if(channel !== null) {
       self.sendSock({'type': 'message', 'channel': channel.id, 'text': text});
     } else {
+      if(this.getUser(userID)) userID = this.getUser(userID); // userID is username here
       self.reqAPI('im.open', { user : this.getUser(userID).id }, function(data){
         if(data.ok === true) {
           self.slackData.ims.push(data.channel);
