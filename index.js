@@ -180,7 +180,7 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
         self.out('error', 'Error. Error: '+data);
         self.emit("error", data)
     }).on('message', function(data) {
-        self.out('transport', "Recieved: " + data);
+        self.out('transport', "Received: " + data);
         data = JSON.parse(data);
         if (typeof data.type != 'undefined'){
             if (data.type === 'team_join') {

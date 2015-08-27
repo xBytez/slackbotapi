@@ -2,7 +2,7 @@ SlackbotAPI
 ============
 [![GitHub Stars](https://img.shields.io/github/stars/xBytez/slackbotapi.svg?style=flat-square)](https://github.com/xBytez/slackbotapi/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/xBytez/slackbotapi.svg?style=flat-square)](https://github.com/xBytez/slackbotapi/issues)
-[![Current Version](https://img.shields.io/badge/version-1.3.3-green.svg?style=flat-square)](https://github.com/xBytez/slackbotapi)
+[![Current Version](https://img.shields.io/badge/version-1.3.4-green.svg?style=flat-square)](https://github.com/xBytez/slackbotapi)
 
 A Node.JS module for Slack's RTM API
 
