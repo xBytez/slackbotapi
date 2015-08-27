@@ -13,99 +13,10 @@ var os          = require('os');
 var webSocket   = require('ws');
 var request     = require('request');
 var logger      = require('jethro');
-var EventEmitter3   = require('eventemitter3');
+var util        = require('util');
+var EventEmitter= require('eventemitter3');
 
-// Starting the logger and EventEmitter
-EventEmitter = new EventEmitter3({
-    wildcard: true,
-    delimiter: ':'
-});
-
-// Defining variables
-var slackData = {};
-var i = 0;
-var token = '';
-var logging;
-
-// Core functions
-var outputLog = function(obj) {
-    if(logging) {
-        logger.output(obj);
-    }
-}
-var reqAPI = function(method, data, callback) {
-    data.token = token;
-    request.post('https://slack.com/api/'+method, function (error, response, body) {
- if (!error && response.statusCode == 200) {
-    if(!callback) { return JSON.parse(body); } else { return callback(JSON.parse(body)); }
- }
-    }).form(data);
-}
-var sendSock = function(data) {
-    if(typeof data !== "undefined") {
-        data.id = i;
-        data = JSON.stringify(data);
-        outputLog({severity:'debug', source:'Socket | Send',message: data,timestamp: new Date(),location: os.hostname()});
-        ws.send(data);
-        i++;
-    } else outputLog({severity:'error', source:'Socket | Send',message:'No arguments.',timestamp: new Date(),location: os.hostname()});
-}
-var connectSlack = function(wsurl) {
-    ws = new webSocket(wsurl);
-    ws.on('open', function() {
-        outputLog({severity:'info', source:'Socket',message:'Connected as '+slackData.self.name+' ['+slackData.self.id+'].',timestamp: new Date(),location: os.hostname()});
-    });
-    ws.on('close', function(data) {
-        outputLog({severity:'error', source:'Socket',message:'Disconnected. Error: '+data,timestamp: new Date(),location: os.hostname()});
-    });
-    ws.on('close', function(data) {
-        outputLog({severity:'error', source:'Socket',message:'Error. Error: '+data,timestamp: new Date(),location: os.hostname()});
-    });
-    ws.on('message', function(data) {
-        outputLog({severity:'debug', source:'Socket | Receive',message: data,timestamp: new Date(),location: os.hostname()});
-        data = JSON.parse(data);
-        if(typeof data.type != 'undefined' && typeof slackAPI['events'][data.type] !== 'undefined') EventEmitter.emit(slackAPI['events'][data.type], data);
-    });
-}
-
-// __init__
-var slackAPI = function(args) {
-    if(typeof args !== 'object') {
-        logging = true;
-        logger.init();
-        outputLog({severity:'error', source:'Slack API',message:'Invalid arguments! Please provide an object with settings.',timestamp: new Date(),location: os.hostname()});
-        process.exit(1);
-    }
-    var authtoken = args['token'];
-    if(typeof args['logging'] !== 'boolean') {
-        logging = true;
-        logger.init();
-        outputLog({severity:'error', source:'Slack API',message:'Invalid arguments! Please provide a valid boolean for logging.',timestamp: new Date(),location: os.hostname()});
-    } else {
-        if(logging === true) { logger.init(); }
-        logging = args['logging'];
-    }
-    if (!authtoken || typeof authtoken !== 'string' || !authtoken.match(/^([a-z]*)\-([0-9]*)\-([0-9a-zA-Z]*)/)) {
-        logging = true;
-        logger.init();
-        outputLog({severity:'error', source:'Slack API',message:'Invalid arguments! Please provide a valid auth token.',timestamp: new Date(),location: os.hostname()});
-        process.exit(1);
-    }
-
-    token = authtoken;
-    reqAPI('rtm.start', {}, function(data) {
-        slackData.self = data.self;
-        slackData.team = data.team;
-        slackData.channels = data.channels;
-        slackData.groups = data.groups;
-        slackData.users = data.users;
-        slackData.ims = data.ims;
-        connectSlack(data.url);
-    });
-}
-
-// Events
-slackAPI.events = {
+var events = {
     hello: 'hello',
     message: 'message',
     channel_marked: 'channel_marked',
@@ -162,79 +73,209 @@ slackAPI.events = {
     email_domain_changed: 'email_domain_changed',
     bot_added: 'bot_added',
     bot_changed: 'bot_changed',
-    accounts_changed: 'accounts_changed'
+    accounts_changed: 'accounts_changed',
+    reaction_added: 'reaction_added',
+    reaction_removed: 'reaction_removed'
 };
 
-// Protoypes
-slackAPI.prototype.reqAPI = reqAPI;
-slackAPI.prototype.data = slackData;
-slackAPI.prototype.logger = logger.output;
-slackAPI.prototype.ping = function() {
-    sendSock({'type': 'ping'});
-    return this;
-}
-slackAPI.prototype.getChannel = function(term) {
-    for(var i in slackData.channels) {
-            if(slackData.channels[i]['name'] === term) var channel = slackData.channels[i];
+var errors = {
+  object_arg_required: 'Invalid arguments! Please provide an object with settings.',
+  boolean_arg_required: 'Invalid arguments! Please provide a valid boolean for logging.',
+  invalid_token: 'Invalid arguments! Please provide a valid auth token.',
+  send_args_required: 'Send: No arguments specified!',
+  data_type_undefined: 'data.type not defined'
+};
+
+function slackAPI(args) {
+    var self = this;
+    var authtoken = args['token'];
+
+    this.slackData = {};
+    this.token = "";
+    this.logging;
+    this.i = 0;
+
+    if (typeof args !== 'object') {
+        this.logging = true;
+        this.out('error', errrs.object_arg_required);
+        throw new Error(errors.object_arg_required);
+    } if (typeof args['logging'] !== 'boolean') {
+        this.logging = true;
+        this.out('error', errors.boolean_arg_required);
+    } else {
+        this.logging = args['logging'];
+    } if (!authtoken || typeof authtoken !== 'string' || !authtoken.match(/^([a-z]*)\-([0-9]*)\-([0-9a-zA-Z]*)/)) {
+        this.logging = true;
+        this.out('error', errors.invalid_token);
+        throw new Error(errors.invalid_token);
     }
-    if(typeof channel == 'undefined') {
-        for(var i in slackData.channels) {
-            if(slackData.channels[i]['id'] === term) var channel = slackData.channels[i];
+
+    this.token = authtoken;
+    self.reqAPI('rtm.start', {}, function (data) {
+        self.slackData.self = data.self;
+        self.slackData.team = data.team;
+        self.slackData.channels = data.channels;
+        self.slackData.groups = data.groups;
+        self.slackData.users = data.users;
+        self.slackData.ims = data.ims;
+        self.connectSlack(data.url, function(err, data){
+            if (!err){
+                self.emit(events[data.type], data);
+            }
+        });
+    });
+};
+
+util.inherits(slackAPI, EventEmitter);
+
+// Protoypes
+slackAPI.prototype.reqAPI = function(method, data, callback) {
+    data.token = this.token;
+    if (typeof data.attachments !== 'undefined') {
+    	data.attachments = JSON.stringify(data.attachments);
+    }
+    request.post('https://slack.com/api/' + method, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            if (!callback) {
+                return JSON.parse(body);
+            } else {
+                return callback(JSON.parse(body));
+            }
+        }
+    }).form(data);
+};
+
+slackAPI.prototype.ping = function() {
+    this.sendSock({'type': 'ping'});
+};
+
+slackAPI.prototype.out = function(severity, message) {
+    if (this.logging) {
+        logger(severity, "SlackAPI", message);
+    }
+};
+
+slackAPI.prototype.sendSock = function(data) {
+    if (typeof data !== "undefined") {
+        data.id = this.i;
+        data = JSON.stringify(data);
+        this.out("debug", "Send: "+data);
+        this.ws.send(data);
+        this.i++;
+    } else {
+        this.out('error', errors.send_args_required);
+    }
+};
+
+slackAPI.prototype.connectSlack = function(wsurl, cb) {
+    var self = this;
+    self.ws = new webSocket(wsurl);
+    self.ws.on('open', function() {
+        self.out('transport', 'Connected as '+self.slackData.self.name+' ['+self.slackData.self.id+'].');
+        self.emit("open")
+    }).on('close', function(data) {
+        self.out('warning', 'Disconnected. Error: '+data);
+        self.emit("close", data)
+    }).on('error', function(data) {
+        self.out('error', 'Error. Error: '+data);
+        self.emit("error", data)
+    }).on('message', function(data) {
+        self.out('transport', "Recieved: " + data);
+        data = JSON.parse(data);
+        if (typeof data.type != 'undefined'){
+            if (data.type === 'team_join') {
+                var messageData = data; // allow cb() to run when user.list refreshes
+                self.reqAPI('users.list', messageData, function(data) {
+                    data.members = self.slackData.users;
+                    cb(null, messageData);
+                })
+            }
+            else if (typeof events[data.type] !== 'undefined') {
+                cb(null, data);
+            }
+        } else {
+            cb(new Error(errors.data_type_undefined));
+        }
+    });
+};
+
+slackAPI.prototype.getChannel = function(term) {
+    var channel = null, self = this;
+    for(var i in self.slackData.channels) {
+        if(self.slackData.channels[i]['name'] === term) {
+            channel = self.slackData.channels[i];
+        }
+    }
+    if (channel === null) {
+        for(var i_ in self.slackData.channels) {
+            if(self.slackData.channels[i_]['id'] === term) {
+                channel = self.slackData.channels[i_];
+            }
         }
     }
     return channel;
-}
+};
+
 slackAPI.prototype.getUser = function(term) {
-    for(var i in slackData.users) {
-            if(slackData.users[i]['name'] === term) var user = slackData.users[i];
+    var user = null, self = this;
+    for(var i in self.slackData.users) {
+        if(self.slackData.users[i]['name'] === term) {
+            user = self.slackData.users[i];
+        }
     }
-    if(typeof user == 'undefined') {
-        for(var i in slackData.users) {
-            if(slackData.users[i]['id'] === term) var user = slackData.users[i];
+    if (user === null) {
+        for(var i_ in self.slackData.users) {
+            if(self.slackData.users[i_]['id'] === term) {
+                user = self.slackData.users[i_];
+            }
         }
     }
     return user;
-}
+};
+
 slackAPI.prototype.getUserByEmail = function(term) {
-	for(var i in slackData.users) {
-			if(slackData.users[i]['profile']['email'] === term) var user = slackData.users[i];
-	}
-	if(typeof user == 'undefined') {
-		for(var i in slackData.users) {
-			if(slackData.users[i]['id'] === term) var user = slackData.users[i];
-		}
-	}
-	return user;
-}
-slackAPI.prototype.getIM = function(term) {
-    for(var i in slackData.ims) {
-            if(slackData.ims[i]['user'] === term) var im = slackData.ims[i];
-    }
-    if(typeof im == 'undefined') {
-        for(var i in slackData.ims) {
-            if(slackData.ims[i]['user'] === this.getUser(term).id) var im = slackData.ims[i];
+    var user = null, self = this;
+    for(var i in self.slackData.users) {
+        if(self.slackData.users[i]['profile']['email'] === term) {
+            user = self.slackData.users[i];
         }
     }
-    if(typeof im == 'undefined') {
-        for(var i in slackData.ims) {
-            if(slackData.ims[i]['id'] === term) var im = slackData.ims[i];
+    if (user === null) {
+        for(var i_ in self.slackData.users) {
+            if(self.slackData.users[i_]['id'] === term) {
+                user = self.slackData.users[i_];
+            }
+        }
+    }
+    return user;
+};
+
+slackAPI.prototype.getIM = function(term) {
+    var im = null, self = this;
+    for (var i in self.slackData.ims) {
+        if(self.slackData.ims[i]['user'] === term) {
+            im = self.slackData.ims[i];
+        }
+    }
+    if (im === null) {
+        var user = this.getUser(term);
+        if(user !== null) {
+          for (var i_ in self.slackData.ims) {
+              if (self.slackData.ims[i_]['user'] === user.id) {
+                  im = self.slackData.ims[i_];
+              }
+          }
+        }
+    }
+    if (im === null) {
+        for (var i__ in self.slackData.ims) {
+            if (self.slackData.ims[i__]['id'] === term) {
+                im = self.slackData.ims[i__];
+            }
         }
     }
     return im;
 }
-slackAPI.prototype.sendMsg = function(channel, text) {
-    sendSock({'type': 'message', 'channel': channel, 'text': text});
-    return this;
-}
-slackAPI.prototype.sendPM = function(user, text) {
-    sendSock({'type': 'message', 'channel': this.getIM(user).id, 'text': text});
-    return this;
-}
-slackAPI.prototype.sendTyping = function(channel) {
-    sendSock({'type': 'typing', channel: channel});
-    return this;
-}
-
 // Event prototypes
 slackAPI.prototype.addListener = function() {
     EventEmitter.addListener.apply(EventEmitter, arguments);
@@ -252,30 +293,35 @@ slackAPI.prototype.many = function() {
     EventEmitter.many.apply(EventEmitter, arguments);
     return this;
 };
-slackAPI.prototype.removeListener = function() {
-    EventEmitter.removeListener.apply(EventEmitter, arguments);
+
+slackAPI.prototype.sendTyping = function(channel) {
+    sendSock({'type': 'typing', channel: channel});
     return this;
+}
+
+slackAPI.prototype.sendMsg = function(channel, text) {
+    this.sendSock({'type': 'message', 'channel': channel, 'text': text});
 };
-slackAPI.prototype.off = function() {
-    EventEmitter.off.apply(EventEmitter, arguments);
-    return this;
+
+slackAPI.prototype.sendPM = function(userID, text) {
+    var self = this;
+    var channel = self.getIM(userID);
+    if(channel !== null) {
+      self.sendSock({'type': 'message', 'channel': channel.id, 'text': text});
+    } else {
+        if(this.getUser(userID)) userID = this.getUser(userID).id; // userID is username here
+        self.reqAPI('im.open', { user : userID }, function(data){
+            if(data.ok === true) {
+                self.slackData.ims.push(data.channel);
+                self.sendSock({'type': 'message', 'channel': data.channel.id, 'text': text});
+            } else {
+                self.out('error', 'Error. Unable to create an im channel: ' + data);
+                self.emit("error", data);
+            }
+        });
+    }
 };
-slackAPI.prototype.removeAllListeners = function() {
-    EventEmitter.removeAllListeners.apply(EventEmitter, arguments);
-    return this;
-};
-slackAPI.prototype.setMaxListeners = function() {
-    EventEmitter.setMaxListeners.apply(EventEmitter, arguments);
-    return this;
-};
-slackAPI.prototype.listeners = function() {
-    EventEmitter.listeners.apply(EventEmitter, arguments);
-    return this;
-};
-slackAPI.prototype.emit = function() {
-    EventEmitter.emit.apply(EventEmitter, arguments);
-    return this;
-};
+
+slackAPI.prototype.events = events;
 
 module.exports = slackAPI;
-
