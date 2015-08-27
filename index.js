@@ -276,23 +276,6 @@ slackAPI.prototype.getIM = function(term) {
     }
     return im;
 }
-// Event prototypes
-slackAPI.prototype.addListener = function() {
-    EventEmitter.addListener.apply(EventEmitter, arguments);
-    return this;
-};
-slackAPI.prototype.on = function() {
-    EventEmitter.on.apply(EventEmitter, arguments);
-    return this;
-};
-slackAPI.prototype.once = function() {
-    EventEmitter.once.apply(EventEmitter, arguments);
-    return this;
-};
-slackAPI.prototype.many = function() {
-    EventEmitter.many.apply(EventEmitter, arguments);
-    return this;
-};
 
 slackAPI.prototype.sendTyping = function(channel) {
     sendSock({'type': 'typing', channel: channel});
