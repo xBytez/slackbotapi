@@ -97,7 +97,7 @@ function slackAPI(args) {
 
     if (typeof args !== 'object') {
         this.logging = true;
-        this.out('error', errrs.object_arg_required);
+        this.out('error', errors.object_arg_required);
         throw new Error(errors.object_arg_required);
     } if (typeof args['logging'] !== 'boolean') {
         this.logging = true;
