@@ -43,18 +43,10 @@ slack.on('message', function(data) {
 				// Send message.
 				slack.sendMsg(data.channel, "Oh, hello @"+slack.getUser(data.user).name+" !")
 			break;
-
-			case "hue":
-				slack.sendMsg(data.channel, "@"+slack.getUser(data.user).name+" brbrbrbrbrb!")
-			break;
-
+			
 			case "say":
 				var say = data.text.split('%say ');
 				slack.sendMsg(data.channel, say[1]);
-			break;
-
-			case "debug":
-				console.log(slack.data.ims);
 			break;
 		}
 	}
