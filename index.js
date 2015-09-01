@@ -86,7 +86,8 @@ var errors = {
   data_type_undefined: 'data.type not defined'
 };
 
-function slackAPI(args) {
+function slackAPI(args, error_cb) {
+    error_cb = error_cb || function() {};
     var self = this;
     var authtoken = args['token'];
 
@@ -112,6 +113,7 @@ function slackAPI(args) {
 
     this.token = authtoken;
     self.reqAPI('rtm.start', {}, function (data) {
+        if (!data.ok) return error_cb(data.error);
         self.slackData.self = data.self;
         self.slackData.team = data.team;
         self.slackData.channels = data.channels;
