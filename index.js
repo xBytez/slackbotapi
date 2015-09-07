@@ -192,6 +192,15 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
                     cb(null, messageData);
                 })
             }
+            else if(data.type === 'presence_change') {
+                // update slackData presence when user becomes active/inactive
+                for(var i in self.slackData.users) {
+                    if(self.slackData.users[i].id === data.user) {
+                        self.slackData.users[i].presence = data.presence;
+                        break;
+                    }
+                }
+            }
             else if (typeof events[data.type] !== 'undefined') {
                 cb(null, data);
             }
