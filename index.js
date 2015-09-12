@@ -208,7 +208,7 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
                 cb(null, data);
             }
         } else {
-            cb(new Error(errors.data_type_undefined));
+            cb(new Error(errors.data_type_undefined), data);
         }
     });
 };
