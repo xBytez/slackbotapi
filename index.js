@@ -124,6 +124,9 @@ function slackAPI(args, error_cb) {
             if (!err){
                 self.emit(events[data.type], data);
             }
+            else {
+                self.emit('error', data)
+            }
         });
     });
 };
@@ -184,7 +187,7 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
     }).on('message', function(data) {
         self.out('transport', "Received: " + data);
         data = JSON.parse(data);
-        if (typeof data.type != 'undefined'){
+        if (typeof data.type !== 'undefined'){
             if (data.type === 'team_join') {
                 var messageData = data; // allow cb() to run when user.list refreshes
                 self.reqAPI('users.list', messageData, function(data) {
@@ -205,7 +208,7 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
                 cb(null, data);
             }
         } else {
-            cb(new Error(errors.data_type_undefined));
+            cb(new Error(errors.data_type_undefined), data);
         }
     });
 };
