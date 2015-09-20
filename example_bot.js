@@ -14,7 +14,8 @@ var slackAPI = require('slackbotapi');
 // Starting
 var slack = new slackAPI({
 	'token': "TOKENHERE",
-	'logging': true
+	'logging': true,
+	'autoReconnect': false
 });
 
 // Slack on EVENT message, send data.
