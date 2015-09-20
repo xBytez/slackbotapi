@@ -79,11 +79,11 @@ var events = {
 };
 
 var errors = {
-  object_arg_required: 'Invalid arguments! Please provide an object with settings.',
-  boolean_arg_required: 'Invalid arguments! Please provide a valid boolean for logging.',
-  invalid_token: 'Invalid arguments! Please provide a valid auth token.',
-  send_args_required: 'Send: No arguments specified!',
-  data_type_undefined: 'data.type not defined'
+    object_arg_required: 'Invalid arguments! Please provide an object with settings.',
+    boolean_arg_required: 'Invalid arguments! Please provide a valid boolean for logging.',
+    invalid_token: 'Invalid arguments! Please provide a valid auth token.',
+    send_args_required: 'Send: No arguments specified!',
+    data_type_undefined: 'data.type not defined'
 };
 
 function slackAPI(args, error_cb) {
@@ -94,6 +94,7 @@ function slackAPI(args, error_cb) {
     this.slackData = {};
     this.token = "";
     this.logging;
+    this.autoReconnect;
     this.i = 0;
 
     if (typeof args !== 'object') {
@@ -109,19 +110,23 @@ function slackAPI(args, error_cb) {
         this.logging = true;
         this.out('error', errors.invalid_token);
         throw new Error(errors.invalid_token);
+    } if (typeof args['autoReconnect'] !== 'boolean') {
+        this.autoReconnect = false;
+    } else {
+        this.autoReconnect = args['autoReconnect'];
     }
 
     this.token = authtoken;
-    self.reqAPI('rtm.start', {}, function (data) {
-        if (!data.ok) return error_cb(data.error);
+    self.reqAPI('rtm.start', {}, function(data) {
+        if(!data.ok) return error_cb(data.error);
         self.slackData.self = data.self;
         self.slackData.team = data.team;
         self.slackData.channels = data.channels;
         self.slackData.groups = data.groups;
         self.slackData.users = data.users;
         self.slackData.ims = data.ims;
-        self.connectSlack(data.url, function(err, data){
-            if (!err){
+        self.connectSlack(data.url, function(err, data) {
+            if(!err) {
                 self.emit(events[data.type], data);
             }
             else {
@@ -129,7 +134,7 @@ function slackAPI(args, error_cb) {
             }
         });
     });
-};
+}
 
 util.inherits(slackAPI, EventEmitter);
 
@@ -180,7 +185,27 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
         self.emit("open")
     }).on('close', function(data) {
         self.out('warning', 'Disconnected. Error: '+data);
-        self.emit("close", data)
+        self.emit("close", data);
+        if(self.autoReconnect) {
+            // auto-reconnect
+            self.reqAPI('rtm.start', {}, function(data) {
+                if(!data.ok) return;
+                self.slackData.self = data.self;
+                self.slackData.team = data.team;
+                self.slackData.channels = data.channels;
+                self.slackData.groups = data.groups;
+                self.slackData.users = data.users;
+                self.slackData.ims = data.ims;
+                self.connectSlack(data.url, function(err, data) {
+                    if(!err) {
+                        self.emit(events[data.type], data);
+                    }
+                    else {
+                        self.emit('error', data)
+                    }
+                });
+            });
+        }
     }).on('error', function(data) {
         self.out('error', 'Error. Error: '+data);
         self.emit("error", data)
