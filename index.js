@@ -322,7 +322,7 @@ slackAPI.prototype.getSlackData = function() {
 };
 
 slackAPI.prototype.sendTyping = function(channel) {
-    sendSock({'type': 'typing', channel: channel});
+    this.sendSock({'type': 'typing', channel: channel});
     return this;
 };
 
