@@ -217,10 +217,11 @@ slackAPI.prototype.connectSlack = function (wsurl, cb) {
         self.out('transport', "Received: " + data);
         data = JSON.parse(data);
         if (typeof data.type !== 'undefined') {
+            // update users list when new member joins
             if (data.type === 'team_join') {
                 var messageData = data; // allow cb() to run when user.list refreshes
                 self.reqAPI('users.list', messageData, function (data) {
-                    data.members = self.slackData.users;
+                    self.slackData.users = data.members;
                     cb(null, messageData);
                 })
             }
