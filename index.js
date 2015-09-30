@@ -9,12 +9,12 @@
 //////////////////////////////////////////////////////////////////
 
 // Requiring node modules.
-var os          = require('os');
-var webSocket   = require('ws');
-var request     = require('request');
-var logger      = require('jethro');
-var util        = require('util');
-var EventEmitter= require('eventemitter3');
+var os = require('os');
+var webSocket = require('ws');
+var request = require('request');
+var logger = require('jethro');
+var util = require('util');
+var EventEmitter = require('eventemitter3');
 
 var events = {
     hello: 'hello',
@@ -87,7 +87,8 @@ var errors = {
 };
 
 function slackAPI(args, error_cb) {
-    error_cb = error_cb || function() {};
+    error_cb = error_cb || function () {
+        };
     var self = this;
     var authtoken = args['token'];
 
@@ -101,32 +102,35 @@ function slackAPI(args, error_cb) {
         this.logging = true;
         this.out('error', errors.object_arg_required);
         throw new Error(errors.object_arg_required);
-    } if (typeof args['logging'] !== 'boolean') {
+    }
+    if (typeof args['logging'] !== 'boolean') {
         this.logging = true;
         this.out('error', errors.boolean_arg_required);
     } else {
         this.logging = args['logging'];
-    } if (!authtoken || typeof authtoken !== 'string' || !authtoken.match(/^([a-z]*)\-([0-9]*)\-([0-9a-zA-Z]*)/)) {
+    }
+    if (!authtoken || typeof authtoken !== 'string' || !authtoken.match(/^([a-z]*)\-([0-9]*)\-([0-9a-zA-Z]*)/)) {
         this.logging = true;
         this.out('error', errors.invalid_token);
         throw new Error(errors.invalid_token);
-    } if (typeof args['autoReconnect'] !== 'boolean') {
+    }
+    if (typeof args['autoReconnect'] !== 'boolean') {
         this.autoReconnect = false;
     } else {
         this.autoReconnect = args['autoReconnect'];
     }
 
     this.token = authtoken;
-    self.reqAPI('rtm.start', {}, function(data) {
-        if(!data.ok) return error_cb(data.error);
+    self.reqAPI('rtm.start', {}, function (data) {
+        if (!data.ok) return error_cb(data.error);
         self.slackData.self = data.self;
         self.slackData.team = data.team;
         self.slackData.channels = data.channels;
         self.slackData.groups = data.groups;
         self.slackData.users = data.users;
         self.slackData.ims = data.ims;
-        self.connectSlack(data.url, function(err, data) {
-            if(!err) {
+        self.connectSlack(data.url, function (err, data) {
+            if (!err) {
                 self.emit(events[data.type], data);
             }
             else {
@@ -139,10 +143,10 @@ function slackAPI(args, error_cb) {
 util.inherits(slackAPI, EventEmitter);
 
 // Protoypes
-slackAPI.prototype.reqAPI = function(method, data, callback) {
+slackAPI.prototype.reqAPI = function (method, data, callback) {
     data.token = this.token;
     if (typeof data.attachments !== 'undefined') {
-    	data.attachments = JSON.stringify(data.attachments);
+        data.attachments = JSON.stringify(data.attachments);
     }
     request.post('https://slack.com/api/' + method, function (error, response, body) {
         if (!error && response.statusCode == 200) {
@@ -155,21 +159,21 @@ slackAPI.prototype.reqAPI = function(method, data, callback) {
     }).form(data);
 };
 
-slackAPI.prototype.ping = function() {
+slackAPI.prototype.ping = function () {
     this.sendSock({'type': 'ping'});
 };
 
-slackAPI.prototype.out = function(severity, message) {
+slackAPI.prototype.out = function (severity, message) {
     if (this.logging) {
         logger(severity, "SlackAPI", message);
     }
 };
 
-slackAPI.prototype.sendSock = function(data) {
+slackAPI.prototype.sendSock = function (data) {
     if (typeof data !== "undefined") {
         data.id = this.i;
         data = JSON.stringify(data);
-        this.out("debug", "Send: "+data);
+        this.out("debug", "Send: " + data);
         this.ws.send(data);
         this.i++;
     } else {
@@ -177,27 +181,27 @@ slackAPI.prototype.sendSock = function(data) {
     }
 };
 
-slackAPI.prototype.connectSlack = function(wsurl, cb) {
+slackAPI.prototype.connectSlack = function (wsurl, cb) {
     var self = this;
     self.ws = new webSocket(wsurl);
-    self.ws.on('open', function() {
-        self.out('transport', 'Connected as '+self.slackData.self.name+' ['+self.slackData.self.id+'].');
+    self.ws.on('open', function () {
+        self.out('transport', 'Connected as ' + self.slackData.self.name + ' [' + self.slackData.self.id + '].');
         self.emit("open")
-    }).on('close', function(data) {
-        self.out('warning', 'Disconnected. Error: '+data);
+    }).on('close', function (data) {
+        self.out('warning', 'Disconnected. Error: ' + data);
         self.emit("close", data);
-        if(self.autoReconnect) {
+        if (self.autoReconnect) {
             // auto-reconnect
-            self.reqAPI('rtm.start', {}, function(data) {
-                if(!data.ok) return;
+            self.reqAPI('rtm.start', {}, function (data) {
+                if (!data.ok) return;
                 self.slackData.self = data.self;
                 self.slackData.team = data.team;
                 self.slackData.channels = data.channels;
                 self.slackData.groups = data.groups;
                 self.slackData.users = data.users;
                 self.slackData.ims = data.ims;
-                self.connectSlack(data.url, function(err, data) {
-                    if(!err) {
+                self.connectSlack(data.url, function (err, data) {
+                    if (!err) {
                         self.emit(events[data.type], data);
                     }
                     else {
@@ -206,24 +210,25 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
                 });
             });
         }
-    }).on('error', function(data) {
-        self.out('error', 'Error. Error: '+data);
+    }).on('error', function (data) {
+        self.out('error', 'Error. Error: ' + data);
         self.emit("error", data)
-    }).on('message', function(data) {
+    }).on('message', function (data) {
         self.out('transport', "Received: " + data);
         data = JSON.parse(data);
-        if (typeof data.type !== 'undefined'){
+        if (typeof data.type !== 'undefined') {
+            // update users list when new member joins
             if (data.type === 'team_join') {
                 var messageData = data; // allow cb() to run when user.list refreshes
-                self.reqAPI('users.list', messageData, function(data) {
-                    data.members = self.slackData.users;
+                self.reqAPI('users.list', messageData, function (data) {
+                    self.slackData.users = data.members;
                     cb(null, messageData);
                 })
             }
-            else if(data.type === 'presence_change') {
+            else if (data.type === 'presence_change') {
                 // update slackData presence when user becomes active/inactive
-                for(var i in self.slackData.users) {
-                    if(self.slackData.users[i].id === data.user) {
+                for (var i in self.slackData.users) {
+                    if (self.slackData.users[i].id === data.user) {
                         self.slackData.users[i].presence = data.presence;
                         break;
                     }
@@ -238,16 +243,16 @@ slackAPI.prototype.connectSlack = function(wsurl, cb) {
     });
 };
 
-slackAPI.prototype.getChannel = function(term) {
+slackAPI.prototype.getChannel = function (term) {
     var channel = null, self = this;
-    for(var i in self.slackData.channels) {
-        if(self.slackData.channels[i]['name'] === term) {
+    for (var i in self.slackData.channels) {
+        if (self.slackData.channels[i]['name'] === term) {
             channel = self.slackData.channels[i];
         }
     }
     if (channel === null) {
-        for(var i_ in self.slackData.channels) {
-            if(self.slackData.channels[i_]['id'] === term) {
+        for (var i_ in self.slackData.channels) {
+            if (self.slackData.channels[i_]['id'] === term) {
                 channel = self.slackData.channels[i_];
             }
         }
@@ -255,16 +260,16 @@ slackAPI.prototype.getChannel = function(term) {
     return channel;
 };
 
-slackAPI.prototype.getUser = function(term) {
+slackAPI.prototype.getUser = function (term) {
     var user = null, self = this;
-    for(var i in self.slackData.users) {
-        if(self.slackData.users[i]['name'] === term) {
+    for (var i in self.slackData.users) {
+        if (self.slackData.users[i]['name'] === term) {
             user = self.slackData.users[i];
         }
     }
     if (user === null) {
-        for(var i_ in self.slackData.users) {
-            if(self.slackData.users[i_]['id'] === term) {
+        for (var i_ in self.slackData.users) {
+            if (self.slackData.users[i_]['id'] === term) {
                 user = self.slackData.users[i_];
             }
         }
@@ -272,16 +277,16 @@ slackAPI.prototype.getUser = function(term) {
     return user;
 };
 
-slackAPI.prototype.getUserByEmail = function(term) {
+slackAPI.prototype.getUserByEmail = function (term) {
     var user = null, self = this;
-    for(var i in self.slackData.users) {
-        if(self.slackData.users[i]['profile']['email'] === term) {
+    for (var i in self.slackData.users) {
+        if (self.slackData.users[i]['profile']['email'] === term) {
             user = self.slackData.users[i];
         }
     }
     if (user === null) {
-        for(var i_ in self.slackData.users) {
-            if(self.slackData.users[i_]['id'] === term) {
+        for (var i_ in self.slackData.users) {
+            if (self.slackData.users[i_]['id'] === term) {
                 user = self.slackData.users[i_];
             }
         }
@@ -289,21 +294,21 @@ slackAPI.prototype.getUserByEmail = function(term) {
     return user;
 };
 
-slackAPI.prototype.getIM = function(term) {
+slackAPI.prototype.getIM = function (term) {
     var im = null, self = this;
     for (var i in self.slackData.ims) {
-        if(self.slackData.ims[i]['user'] === term) {
+        if (self.slackData.ims[i]['user'] === term) {
             im = self.slackData.ims[i];
         }
     }
     if (im === null) {
         var user = this.getUser(term);
-        if(user !== null) {
-          for (var i_ in self.slackData.ims) {
-              if (self.slackData.ims[i_]['user'] === user.id) {
-                  im = self.slackData.ims[i_];
-              }
-          }
+        if (user !== null) {
+            for (var i_ in self.slackData.ims) {
+                if (self.slackData.ims[i_]['user'] === user.id) {
+                    im = self.slackData.ims[i_];
+                }
+            }
         }
     }
     if (im === null) {
@@ -316,29 +321,29 @@ slackAPI.prototype.getIM = function(term) {
     return im;
 };
 
-slackAPI.prototype.getSlackData = function() {
+slackAPI.prototype.getSlackData = function () {
     // allow process to access locally stored slackData
     return this.slackData;
 };
 
-slackAPI.prototype.sendTyping = function(channel) {
+slackAPI.prototype.sendTyping = function (channel) {
     this.sendSock({'type': 'typing', channel: channel});
     return this;
 };
 
-slackAPI.prototype.sendMsg = function(channel, text) {
+slackAPI.prototype.sendMsg = function (channel, text) {
     this.sendSock({'type': 'message', 'channel': channel, 'text': text});
 };
 
-slackAPI.prototype.sendPM = function(userID, text) {
+slackAPI.prototype.sendPM = function (userID, text) {
     var self = this;
     var channel = self.getIM(userID);
-    if(channel !== null) {
-      self.sendSock({'type': 'message', 'channel': channel.id, 'text': text});
+    if (channel !== null) {
+        self.sendSock({'type': 'message', 'channel': channel.id, 'text': text});
     } else {
-        if(this.getUser(userID)) userID = this.getUser(userID).id; // userID is username here
-        self.reqAPI('im.open', { user : userID }, function(data){
-            if(data.ok === true) {
+        if (this.getUser(userID)) userID = this.getUser(userID).id; // userID is username here
+        self.reqAPI('im.open', {user: userID}, function (data) {
+            if (data.ok === true) {
                 self.slackData.ims.push(data.channel);
                 self.sendSock({'type': 'message', 'channel': data.channel.id, 'text': text});
             } else {
