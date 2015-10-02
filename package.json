@@ -32,5 +32,8 @@
   "bugs": {
     "url": "https://github.com/xBytez/slackbotapi/issues"
   },
-  "homepage": "https://github.com/xBytez/slackbotapi"
+  "homepage": "https://github.com/xBytez/slackbotapi",
+  "directories": {
+    "example": "examples"
+  }
 }
