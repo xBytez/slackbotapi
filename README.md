@@ -2,7 +2,7 @@ SlackbotAPI
 ============
 [![GitHub Stars](https://img.shields.io/github/stars/xBytez/slackbotapi.svg?style=flat-square)](https://github.com/xBytez/slackbotapi/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/xBytez/slackbotapi.svg?style=flat-square)](https://github.com/xBytez/slackbotapi/issues)
-[![Current Version](https://img.shields.io/badge/version-1.3.5-green.svg?style=flat-square)](https://github.com/xBytez/slackbotapi)
+[![Current Version](https://img.shields.io/npm/v/slackbotapi.svg?style=flat-square)](https://github.com/xBytez/slackbotapi)
 
 A Node.JS module for Slack's RTM API
 
@@ -23,4 +23,4 @@ Installing slackbotapi is as simple as running the following command:
 ---
 
 ## Usage
-After installing this module and its [dependencies](#Requirements), you can check the [example_bot.js](https://github.com/xBytez/slackbotapi/blob/master/example_bot.js) to learn the basics.
+After installing this module and its [dependencies](#Requirements), you can check the [example_bot.js](https://github.com/xBytez/slackbotapi/blob/master/examples/example_bot.js) to learn the basics.
