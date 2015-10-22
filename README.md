@@ -4,6 +4,7 @@ SlackbotAPI
 [![GitHub Issues](https://img.shields.io/github/issues/xBytez/slackbotapi.svg?style=flat-square)](https://github.com/xBytez/slackbotapi/issues)
 [![Current Version](https://img.shields.io/npm/v/slackbotapi.svg?style=flat-square)](https://github.com/xBytez/slackbotapi)
 [![Documentation Coverage](http://inch-ci.org/github/xBytez/slackbotapi.svg?branch=master)](http://inch-ci.org/github/xBytez/slackbotapi)
+[![Code Climate](https://codeclimate.com/github/xBytez/slackbotapi/badges/gpa.svg)](https://codeclimate.com/github/xBytez/slackbotapi)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/xBytez/slackbotapi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 A Node.JS module for Slack's RTM API
