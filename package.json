@@ -1,6 +1,6 @@
 {
   "name": "slackbotapi",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "a node.js API using Slack their RTM API",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,8 @@
   },
   "author": "xBytez <me@xbytez.eu>",
   "contributors": [
-    "Samuel Mills <spam.mills@hotmail.com>"
+    "Samuel Mills <spam.mills@hotmail.com>",
+    "Igor Antun <igorantunc@hotmail.com>"
   ],
   "license": "LGPL-3.0",
   "bugs": {
