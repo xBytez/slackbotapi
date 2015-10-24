@@ -30,5 +30,13 @@ After installing this module and its [dependencies](#Requirements), you can chec
 
 ---
 
+## Cool projects built on slackbotapi
+
+ * [Slackslime by @franciskim](https://github.com/franciskim/slackslime)
+
+If you want your project to be listed here, please let us know by creating an issue with the link to your project. Chances are we'll list it here!
+
+---
+
 ## Contact us
 You can join the #slackbotapi channel over at https://slack.radiant.dj. (If you are already registered you can find us at https://radiantdj.slack.com) If you prefer not to join yet another Slack team, feel free to join Gitter or post an issue.
