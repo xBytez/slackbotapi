@@ -38,7 +38,7 @@ slack.on('message', function (data) {
         }
 
         // Switch to check which command has been requested.
-        switch (command[0].lowerCase()) {
+        switch (command[0].toLowerCase()) {
             // If hello
             case 'hello':
                 // Send message
