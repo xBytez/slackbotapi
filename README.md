@@ -33,6 +33,7 @@ After installing this module and its [dependencies](#Requirements), you can chec
 ## Cool projects built on slackbotapi
 
  * [Slackslime by @franciskim](https://github.com/franciskim/slackslime)
+ * [Slackquizbot by @codebyfire](https://github.com/codebyfire/slackquizbot)
 
 If you want your project to be listed here, please let us know by creating an issue with the link to your project. Chances are we'll list it here!
 
