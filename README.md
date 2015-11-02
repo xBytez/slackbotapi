@@ -34,6 +34,7 @@ After installing this module and its [dependencies](#Requirements), you can chec
 
  * [Slackslime by @franciskim](https://github.com/franciskim/slackslime)
  * [Slackquizbot by @codebyfire](https://github.com/codebyfire/slackquizbot)
+ * [Slackweatherbot by @franciskim](https://github.com/franciskim/Slackweatherbot)
 
 If you want your project to be listed here, please let us know by creating an issue with the link to your project. Chances are we'll list it here!
 
