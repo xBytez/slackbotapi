@@ -19,10 +19,10 @@
     "bot"
   ],
   "dependencies": {
-    "ws": "*",
-    "request": "*",
-    "jethro": "*",
-    "eventemitter3": "*"
+    "eventemitter3": "^1.2.0",
+    "jethro": "^2.7.1",
+    "request": "^2.72.0",
+    "ws": "^1.1.0"
   },
   "author": "xBytez <me@xbytez.eu>",
   "contributors": [
