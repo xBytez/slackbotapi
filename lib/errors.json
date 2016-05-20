@@ -1,0 +1,7 @@
+{
+    "object_arg_required": "Invalid arguments! Please provide an object with settings.",
+    "boolean_arg_required": "Invalid arguments! Please provide a valid boolean for logging.",
+    "invalid_token": "Invalid arguments! Please provide a valid auth token.",
+    "send_args_required": "Send: No arguments specified!",
+    "data_type_undefined": "data.type not defined"
+}

@@ -21,7 +21,7 @@ var slack = new slackAPI({
 // Slack on EVENT message, send data.
 slack.on('message', function (data) {
     // If no text, return.
-    if (typeof data.text == 'undefined') return;
+    if (typeof data.text === 'undefined') return;
     // If someone says `cake!!` respond to their message with 'user OOH, CAKE!! :cake:'
     if (data.text === 'cake!!') slack.sendMsg(data.channel, '@' + slack.getUser(data.user).name + ' OOH, CAKE!! :cake:');
 
@@ -31,7 +31,7 @@ slack.on('message', function (data) {
         var command = data.text.substring(1).split(' ');
 
         // If command[2] is not undefined, use command[1] to have all arguments in command[1]
-        if (typeof command[2] != 'undefined') {
+        if (typeof command[2] !== 'undefined') {
             for (var i = 2; i < command.length; i++) {
                 command[1] = command[1] + ' ' + command[i];
             }
