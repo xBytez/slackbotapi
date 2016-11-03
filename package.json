@@ -21,7 +21,7 @@
   "dependencies": {
     "eventemitter3": "^1.2.0",
     "jethro": "^2.7.1",
-    "request": "^2.77.0",
+    "request": "^2.78.0",
     "ws": "^1.1.1"
   },
   "author": "xBytez <me@xbytez.io>",
