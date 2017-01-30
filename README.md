@@ -1,5 +1,7 @@
 SlackbotAPI
 ============
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/xBytez/slackbotapi.svg)](https://greenkeeper.io/)
 [![GitHub Stars](https://img.shields.io/github/stars/xBytez/slackbotapi.svg)](https://github.com/xBytez/slackbotapi/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/xBytez/slackbotapi.svg)](https://github.com/xBytez/slackbotapi/issues)
 [![Current Version](https://img.shields.io/npm/v/slackbotapi.svg)](https://github.com/xBytez/slackbotapi)
