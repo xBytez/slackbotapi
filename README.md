@@ -1,5 +1,6 @@
-![Logo](/logo.png)
-
+<p align="center">
+  <img src="https://github.com/waynekata/slackbotapi/blob/logo/logo.png"/>
+</p>
 SlackbotAPI
 ============
 [![GitHub Stars](https://img.shields.io/github/stars/xBytez/slackbotapi.svg)](https://github.com/xBytez/slackbotapi/stargazers)
