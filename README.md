@@ -1,3 +1,5 @@
+![Logo](/logo.png)
+
 SlackbotAPI
 ============
 [![GitHub Stars](https://img.shields.io/github/stars/xBytez/slackbotapi.svg)](https://github.com/xBytez/slackbotapi/stargazers)
