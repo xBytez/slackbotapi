@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/waynekata/slackbotapi/blob/logo/logo.png"/>
+  <img src="https://github.com/xBytez/slackbotapi/blob/logo/logo.png"/>
 </p>
 
 
