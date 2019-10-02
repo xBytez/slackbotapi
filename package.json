@@ -19,11 +19,11 @@
     "bot"
   ],
   "dependencies": {
-    "eventemitter3": "^3.1.0",
-    "jest": "^23.6.0",
-    "jethro": "^4.4.0",
+    "eventemitter3": "^4.0.0",
+    "jest": "^24.9.0",
+    "jethro": "^4.4.3",
     "request": "^2.88.0",
-    "ws": "^6.0.0"
+    "ws": "^7.1.2"
   },
   "author": "xBytez <me@xbytez.io>",
   "contributors": [
